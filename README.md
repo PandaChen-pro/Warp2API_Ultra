@@ -1,10 +1,12 @@
 # Warp AI 代理服务与账号池系统
 
-这是一个功能完备的Warp AI API代理服务，它不仅提供了与OpenAI Chat Completions API的兼容性，还集成了一套全自动的账号注册、维护和分配系统。项目的设计目标是提供一个稳定、高效且易于管理的Warp AI接口。
+这是一个功能完备的Warp AI API代理服务，它不仅提供了与OpenAI Chat Completions API的兼容性，还集成了一套全自动的账号注册、维护和分配系统。项目的设计目标是提供一个稳定、高效且易于管理的Warp AI接口。本项目相较于`dundunduan/warp2api`修复了代理的bug，不再会出现账号余额不足反复请求账号池等问题。
 
 该项目的设计思路和部分实现得益于以下优秀项目：
+- **账号池与注册机主体代码**: [Warp2Api_Plus](https://github.com/xzzvsxd/Warp2Api_Plus)
 - **Protobuf协议逆向基础**: [libaxuan/Warp2Api](https://github.com/libaxuan/Warp2Api)
 - **账号池与注册机思路**: [dundunduan/warp2api](https://github.com/dundunduan/warp2api)
+
 
 ---
 
@@ -49,8 +51,8 @@
 ### 1. 克隆仓库
 
 ```bash
-git clone <your-repository-url>
-cd <repository-name>
+git clone https://github.com/PandaChen-pro/Warp2API_Ultra
+cd Warp2API_Ultra
 ```
 
 ### 2. 安装依赖
