@@ -17,7 +17,8 @@ from .logging import logger
 from .proxy_manager import AsyncProxyManager
 
 # 账号池服务配置
-POOL_SERVICE_URL = os.getenv("POOL_SERVICE_URL", "http://localhost:8019")
+# 默认使用 127.0.0.1 避免某些环境下 localhost 解析为 ::1 或被系统代理拦截
+POOL_SERVICE_URL = os.getenv("POOL_SERVICE_URL", "http://127.0.0.1:8019")
 USE_POOL_SERVICE = os.getenv("USE_POOL_SERVICE", "true").lower() == "true"
 
 
@@ -37,10 +38,12 @@ class PoolAuthManager:
         logger.info(f"正在从账号池服务获取新会话: {self.pool_url}")
 
         try:
+            # 与本地账号池通信：禁止从环境读取代理，避免走系统代理导致 502
             client_config = {
                 "timeout": httpx.Timeout(30.0),
                 "verify": False,
-                "trust_env": True
+                "trust_env": False,
+                "proxy": None,
             }
 
             async with httpx.AsyncClient(**client_config) as client:
@@ -219,10 +222,12 @@ class PoolAuthManager:
         logger.info(f"正在释放会话: {session_id}")
 
         try:
+            # 与本地账号池通信：禁止从环境读取代理
             client_config = {
                 "timeout": httpx.Timeout(10.0),
                 "verify": False,
-                "trust_env": True
+                "trust_env": False,
+                "proxy": None,
             }
 
             async with httpx.AsyncClient(**client_config) as client:

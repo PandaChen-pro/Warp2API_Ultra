@@ -355,9 +355,9 @@ async def send_protobuf_to_warp_api(
                                 if current_session:
                                     # 通知pool service标记账号
                                     try:
-                                        async with httpx.AsyncClient(timeout=5.0) as notify_client:
+                                        async with httpx.AsyncClient(timeout=5.0, trust_env=False, proxy=None) as notify_client:
                                             await notify_client.post(
-                                                "http://localhost:8019/api/accounts/mark_blocked",
+                                                "http://127.0.0.1:8019/api/accounts/mark_blocked",
                                                 json={"email": account_email}
                                             )
                                     except:
@@ -684,9 +684,9 @@ async def send_protobuf_to_warp_api_parsed(protobuf_bytes: bytes) -> None | tupl
                                 if current_session:
                                     # 通知pool service标记账号
                                     try:
-                                        async with httpx.AsyncClient(timeout=5.0) as notify_client:
+                                        async with httpx.AsyncClient(timeout=5.0, trust_env=False, proxy=None) as notify_client:
                                             await notify_client.post(
-                                                "http://localhost:8019/api/accounts/mark_blocked",
+                                                "http://127.0.0.1:8019/api/accounts/mark_blocked",
                                                 json={"email": account_email}
                                             )
                                     except:

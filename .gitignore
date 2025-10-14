@@ -14,3 +14,6 @@ logs/
 packets_docs/
 .github/
 AGENTS.md
+.DS_Store 
+.env.swp  
+.python-version 

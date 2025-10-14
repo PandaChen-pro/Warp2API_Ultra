@@ -578,10 +578,10 @@ async def send_to_warp_api_stream_sse(request: EncodeRequest):
                                         # 标记当前账号为blocked（如果有pool service）
                                         if jwt:
                                             try:
-                                                # 通知账号池服务该账号已被封
-                                                async with httpx.AsyncClient(timeout=5.0) as notify_client:
+                                                # 通知账号池服务该账号已被封（本地服务，禁用环境代理）
+                                                async with httpx.AsyncClient(timeout=5.0, trust_env=False, proxy=None) as notify_client:
                                                     await notify_client.post(
-                                                        "http://localhost:8019/api/accounts/mark_blocked",
+                                                        "http://127.0.0.1:8019/api/accounts/mark_blocked",
                                                         json={"jwt_token": jwt[:50]}  # 只传部分token作为标识
                                                     )
                                             except Exception as e:
