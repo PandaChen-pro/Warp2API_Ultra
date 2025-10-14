@@ -17,3 +17,5 @@ AGENTS.md
 .DS_Store 
 .env.swp  
 .python-version 
+nohup.out
+pool_service
