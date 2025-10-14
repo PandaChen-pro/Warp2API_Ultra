@@ -95,6 +95,10 @@ uv run main.py register 20
 
 ```bash
 uv run main.py all
+# 或者使用以下指令持久化运行
+nohup uv run main.py all > nohup.out 2>&1 &
+# kill服务
+pkill -f "uv run main.py"
 ```
 
 脚本会为每个服务创建一个独立的进程，并打印出每个服务的启动信息和进程ID。你可以通过 `Ctrl+C` 来优雅地关闭所有服务。
