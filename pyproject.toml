@@ -1,0 +1,29 @@
+[project]
+name = "warptestui"
+version = "0.1.0"
+description = "Test UI for Warp"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]",
+    "uvicorn[standard]",
+    "httpx[http2]",
+    "protobuf",
+    "grpcio",
+    "grpcio-tools",
+    "python-dotenv",
+    "websockets>=15.0.1",
+    "requests>=2.32.5",
+    "openai>=1.106.0",
+    "aiosqlite>=0.21.0",
+    "fake-useragent>=2.2.0",
+    "pydantic>=2.11.7",
+]
+
+[project.scripts]
+warp-server = "server:main"
+warp-test = "main:main"
+
+[[tool.uv.index]]
+url = "https://mirrors.ustc.edu.cn/pypi/simple"
+default = true
