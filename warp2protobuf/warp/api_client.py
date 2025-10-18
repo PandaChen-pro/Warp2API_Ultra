@@ -375,14 +375,14 @@ async def send_protobuf_to_warp_api(
                                 else:
                                     return f"❌ Account blocked after {MAX_QUOTA_RETRIES} attempts", None, None
 
-                            # 检查是否是配额用尽错误
-                            is_quota_error = ("No remaining quota" in error_content) or (
-                                    "No AI requests remaining" in error_content)
+                            # 检查是否是明确的配额用尽错误 (通过特定错误信息判断)
+                            is_quota_error = ("No remaining quota" in error_content) or \
+                                             ("No AI requests remaining" in error_content)
 
-                            if response.status_code == 429 and is_quota_error:
+                            if is_quota_error:
                                 if attempt < (MAX_QUOTA_RETRIES - 1):
                                     logger.warning(
-                                        f"Warp API 返回 429 (配额用尽)。将在 {RETRY_DELAY_SECONDS} 秒后强制获取新账号并重试 (第 {attempt + 2}/{MAX_QUOTA_RETRIES} 次)...")
+                                        f"Warp API 返回明确的配额用尽信息。将在 {RETRY_DELAY_SECONDS} 秒后强制获取新账号并重试 (第 {attempt + 2}/{MAX_QUOTA_RETRIES} 次)...")
                                     await asyncio.sleep(RETRY_DELAY_SECONDS)
                                     # 跳出代理循环，进入下一个attempt获取新账号
                                     break
@@ -390,11 +390,11 @@ async def send_protobuf_to_warp_api(
                                     # 所有账号都用尽了
                                     await release_pool_session(current_session.get("session_id"))
                                     current_session = None
-                                    return f"❌ API Error (HTTP {response.status_code}) after {MAX_QUOTA_RETRIES} attempts: {error_content}", None, None
+                                    return f"❌ API Error (Quota Exhausted) after {MAX_QUOTA_RETRIES} attempts: {error_content}", None, None
 
-                            # 其他HTTP错误，尝试换代理
-                            logger.error(
-                                f"HTTP错误 {response.status_code}，尝试换代理 (proxy attempt {proxy_attempt + 1}/{max_proxy_retries})")
+                            # 其他HTTP错误 (包括由IP限制导致的429)，尝试换代理
+                            logger.warning(
+                                f"HTTP错误 {response.status_code}，可能为IP速率限制。尝试更换代理 (proxy attempt {proxy_attempt + 1}/{max_proxy_retries})")
                             if proxy_attempt < max_proxy_retries - 1:
                                 await asyncio.sleep(0.5)
                                 continue  # 继续下一个proxy_attempt
@@ -707,10 +707,10 @@ async def send_protobuf_to_warp_api_parsed(protobuf_bytes: bytes) -> None | tupl
                             is_quota_error = ("No remaining quota" in error_content) or (
                                     "No AI requests remaining" in error_content)
 
-                            if response.status_code == 429 and is_quota_error:
+                            if is_quota_error:
                                 if attempt < (MAX_QUOTA_RETRIES - 1):
                                     logger.warning(
-                                        f"Warp API 返回 429 (配额用尽/解析模式)。将在 {RETRY_DELAY_SECONDS} 秒后强制获取新账号并重试 (第 {attempt + 2}/{MAX_QUOTA_RETRIES} 次)...")
+                                        f"Warp API 返回明确的配额用尽信息(解析模式)。将在 {RETRY_DELAY_SECONDS} 秒后强制获取新账号并重试 (第 {attempt + 2}/{MAX_QUOTA_RETRIES} 次)...")
                                     await asyncio.sleep(RETRY_DELAY_SECONDS)
                                     # 跳出代理循环，进入下一个attempt获取新账号
                                     break
@@ -718,11 +718,11 @@ async def send_protobuf_to_warp_api_parsed(protobuf_bytes: bytes) -> None | tupl
                                     # 所有账号都用尽了
                                     await release_pool_session(current_session.get("session_id"))
                                     current_session = None
-                                    return f"❌ API Error (HTTP {response.status_code}) after {MAX_QUOTA_RETRIES} attempts: {error_content}", None, None, []
+                                    return f"❌ API Error (Quota Exhausted) after {MAX_QUOTA_RETRIES} attempts: {error_content}", None, None, []
 
-                            # 其他HTTP错误，尝试换代理
-                            logger.error(
-                                f"HTTP错误 {response.status_code}(解析模式)，尝试换代理 (proxy attempt {proxy_attempt + 1}/{max_proxy_retries})")
+                            # 其他HTTP错误 (包括由IP限制导致的429)，尝试换代理
+                            logger.warning(
+                                f"HTTP错误 {response.status_code}(解析模式)，可能为IP速率限制。尝试换代理 (proxy attempt {proxy_attempt + 1}/{max_proxy_retries})")
                             if proxy_attempt < max_proxy_retries - 1:
                                 await asyncio.sleep(0.5)
                                 continue

@@ -4,6 +4,7 @@ import asyncio
 
 import httpx
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .bridge import initialize_once
 from .config import BRIDGE_BASE_URL, WARMUP_INIT_RETRIES, WARMUP_INIT_DELAY_S
@@ -11,6 +12,13 @@ from .logging import logger
 from .router import router
 
 app = FastAPI(title="OpenAI Chat Completions - Streaming")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(router)
 
 
